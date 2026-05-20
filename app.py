@@ -569,7 +569,7 @@ app.layout = dbc.Container([
                     html.I(className="fas fa-chart-line me-2"),
                     f"{len(df_main):,} registros processados | ",
                     html.I(className="fas fa-code me-2"),
-                    f"Desenvolvido por {version.__author__}"
+                    f"Desenvolvido pelo {version.__author__}"
                 ], className="text-center text-muted small mb-1"),
                 html.P([
                     html.I(className="fas fa-info-circle me-2"),
