@@ -1,0 +1,16 @@
+{
+  "cache_type": "raw",
+  "filename": "cache_9eb1a81f3a97aa111b5024ae842696fa.parquet",
+  "rows": 50000,
+  "columns": 37,
+  "memory_mb": 65.37117004394531,
+  "params": {
+    "source": "csv",
+    "year": 2022,
+    "max_records": 50000,
+    "states": null
+  },
+  "cached_at": "2026-05-20T07:36:32.043975",
+  "ttl_days": 30,
+  "expires_at": "2026-06-19T07:36:32.044282"
+}

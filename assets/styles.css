@@ -1,0 +1,129 @@
+/* ENEM Dashboard - Custom Styles */
+
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Header styles */
+h1 {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+h5, h6 {
+    color: #34495e;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+}
+
+/* KPI Card styles */
+.text-center h3 {
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+/* Tab styles */
+.nav-tabs .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    border: none;
+    border-bottom: 3px solid transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #007bff;
+    border-bottom: 3px solid #007bff;
+    background-color: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+    border-bottom: 3px solid #0056b3;
+}
+
+/* Filter panel styles */
+.card-body label {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Dropdown styles */
+.Select-control {
+    border-radius: 4px;
+}
+
+/* Button styles */
+.btn {
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Graph container */
+.js-plotly-plot {
+    border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Loading spinner */
+._dash-loading {
+    margin: 2rem auto;
+}
+
+/* Tooltip styles */
+.rc-slider-tooltip {
+    font-size: 0.85rem;
+}
+
+/* Stats summary */
+#filtered-stats {
+    padding: 1rem;
+    background-color: #e7f3ff;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+/* Color scheme variables */
+:root {
+    --primary-color: #1f77b4;
+    --secondary-color: #ff7f0e;
+    --success-color: #2ca02c;
+    --danger-color: #d62728;
+    --warning-color: #ff9800;
+    --info-color: #17a2b8;
+}
+
+/* Made with Bob */
