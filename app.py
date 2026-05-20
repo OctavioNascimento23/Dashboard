@@ -570,9 +570,9 @@ app.layout = dbc.Container([
                     "Status: ",
                     html.Span(version.__status__, className="badge bg-success"),
                     " | ",
-                    html.A("Documentação", href="README.md", target="_blank", className="text-decoration-none me-2"),
+                    html.A("Documentação", href="https://github.com/OctavioNascimento23/Dashboard/blob/main/docs/CODE_DOCUMENTATION.md", target="_blank", className="text-decoration-none me-2"),
                     " | ",
-                    html.A("Changelog", href="CHANGELOG.md", target="_blank", className="text-decoration-none")
+                    html.A("Changelog", href="https://github.com/OctavioNascimento23/Dashboard/blob/main/CHANGELOG.md", target="_blank", className="text-decoration-none")
                 ], className="text-center text-muted small mb-3")
             ])
         ])
