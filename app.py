@@ -969,4 +969,4 @@ if __name__ == '__main__':
     print("Pressione Ctrl+C para parar o servidor")
     print("="*80 + "\n")
     
-    app.run(debug=True, host='0.0.0.0', port=8050)
+    app.run(debug=False, host='0.0.0.0', port=8050)
