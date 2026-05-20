@@ -1168,6 +1168,6 @@ df_transformed = self._create_my_feature(df_transformed)
 
 ---
 
-**Última Atualização**: 2026-05-21  
+**Última Atualização**: 2026-05-20
 **Versão**: 1.0.0  
 **Autor**: Grupo 08
