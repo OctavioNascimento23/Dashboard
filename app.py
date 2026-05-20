@@ -484,7 +484,7 @@ def create_distribution_histogram(df):
         x='nota_media',
         nbins=50,
         title="Distribuição de Notas",
-        labels={'nota_media': 'Nota Média', 'count': 'Frequência'},
+        labels={'nota_media': 'Nota Média'},
         color_discrete_sequence=['#636EFA']
     )
     
@@ -493,11 +493,17 @@ def create_distribution_histogram(df):
         x=mean_score,
         line_dash="dash",
         line_color="red",
-        annotation_text=f"Média: {mean_score:.1f}",
+        annotation_text=f"Média Nacional: {mean_score:.1f}",
         annotation_position="top"
     )
     
-    fig.update_layout(height=400, showlegend=False)
+    # Atualizar labels dos eixos explicitamente
+    fig.update_layout(
+        height=400,
+        showlegend=False,
+        xaxis_title="Nota Média",
+        yaxis_title="Quantidade de Estudantes"
+    )
     return fig
 
 # ============================================================================
@@ -532,8 +538,8 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dbc.Tabs([
-                dbc.Tab(label="📈 Visão Executiva", tab_id="executive"),
-                dbc.Tab(label="🔍 Análise Detalhada", tab_id="detailed"),
+                dbc.Tab(label="📊 Geral", tab_id="executive"),
+                dbc.Tab(label="🔍 Avançado", tab_id="detailed"),
             ], id="tabs", active_tab="executive", className="mb-4")
         ])
     ]),

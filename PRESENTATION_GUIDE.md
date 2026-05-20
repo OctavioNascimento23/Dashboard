@@ -88,7 +88,7 @@ python app.py
 
 **O que dizer:**
 
-> "Bom dia/Boa tarde! Hoje vou apresentar o **Dashboard ENEM**, um projeto de análise de dados educacionais desenvolvido como parte da disciplina de Banco de Dados."
+> "Bom dia/Boa tarvde! Hoje vou apresentar o **Dashboard ENEM**, um projeto de análise de dados educacionais desenvolvido como parte da disciplina de Banco de Dados."
 
 **Pontos a cobrir:**
 - Nome do projeto
