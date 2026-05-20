@@ -349,7 +349,7 @@ Este projeto é desenvolvido para fins educacionais como parte do curso de Siste
 
 ## 👥 Autores
 
-**Equipe Dashboard ENEM:**
+**Grupo 08:**
 EDUARDA PICOLO BARBOZA
 EDUARDO SANVIDO APOLINARIO
 LAURA NOGUEIRA PEREIRA

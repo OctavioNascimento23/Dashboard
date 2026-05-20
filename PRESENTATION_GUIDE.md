@@ -94,7 +94,6 @@ python app.py
 - Nome do projeto
 - Objetivo principal
 - Tecnologias principais (Python, Dash, CSV Local)
-- Sua equipe (se aplicável)
 
 **Slide/Visual:**
 - Tela inicial do dashboard
