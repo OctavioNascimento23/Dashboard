@@ -39,7 +39,7 @@ Dashboard interativo para análise compreensiva dos dados do ENEM (Exame Naciona
 
 ```bash
 # 1. Clonar o repositório (ou baixar ZIP)
-git clone [URL_DO_REPOSITORIO]
+git clone https://github.com/OctavioNascimento23/Dashboard
 cd Dashboard
 
 # 2. Instalar dependências
