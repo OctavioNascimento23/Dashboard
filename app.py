@@ -56,9 +56,9 @@ try:
         max_records=config.MAX_RECORDS
     )
     
-    print(f"✓ Dados carregados com sucesso: {len(df_main):,} registros")
-    print(f"✓ Colunas: {len(df_main.columns)}")
-    print(f"✓ Memória: {df_main.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
+    print(f"[OK] Dados carregados com sucesso: {len(df_main):,} registros")
+    print(f"[OK] Colunas: {len(df_main.columns)}")
+    print(f"[OK] Memória: {df_main.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
     
 except Exception as e:
     logger.error(f"Erro ao carregar dados do CSV: {e}")
@@ -85,7 +85,7 @@ column_mapping = {
     'tp_localizacao_esc': 'localizacao_escola',
     'q001': 'escolaridade_pai',
     'q002': 'escolaridade_mae',
-    'q005': 'renda_familiar'
+    'q006': 'renda_familiar'  # Q006 é a faixa de renda familiar (A-Q)
 }
 
 df_main = df_main.rename(columns=column_mapping)
@@ -97,17 +97,17 @@ existing_score_cols = [col for col in score_cols if col in df_main.columns]
 
 if existing_score_cols:
     df_main['nota_media'] = df_main[existing_score_cols].mean(axis=1)
-    print(f"✓ Nota média calculada a partir de {len(existing_score_cols)} áreas")
+    print(f"[OK] Nota média calculada a partir de {len(existing_score_cols)} áreas")
 
 # Adicionar região se não existir
 if 'regiao' not in df_main.columns and 'sigla_uf' in df_main.columns:
     df_main['regiao'] = df_main['sigla_uf'].map(
         lambda uf: config.get_region_for_state(uf) if pd.notna(uf) else None
     )
-    print(f"✓ Região adicionada para {df_main['regiao'].notna().sum():,} registros")
+    print(f"[OK] Região adicionada para {df_main['regiao'].notna().sum():,} registros")
 
 print("\n" + "="*80)
-print(f"✓ DADOS PRONTOS PARA O DASHBOARD")
+print(f"[OK] DADOS PRONTOS PARA O DASHBOARD")
 print("="*80)
 print(f"Total de registros: {len(df_main):,}")
 print(f"Total de colunas: {len(df_main.columns)}")
@@ -134,6 +134,77 @@ cache = Cache(app.server, config={
 })
 
 app.title = "ENEM Dashboard - Análise Educacional"
+
+# ============================================================================
+# MAPEAMENTOS DE VARIÁVEIS CATEGÓRICAS
+# ============================================================================
+
+# Mapeamento para tipo de escola (TP_ESCOLA)
+# Mapeamento para tipo de escola (TP_ESCOLA)
+# Nota: As chaves são strings porque o data_loader converte colunas categóricas para string
+TIPO_ESCOLA_MAP = {
+    '1': 'Não Respondeu',
+    '2': 'Pública',
+    '3': 'Privada',
+    1: 'Não Respondeu',
+    2: 'Pública',
+    3: 'Privada'
+}
+
+# Mapeamento para cor/raça (TP_COR_RACA)
+COR_RACA_MAP = {
+    '0': 'Não declarado',
+    '1': 'Branca',
+    '2': 'Preta',
+    '3': 'Parda',
+    '4': 'Amarela',
+    '5': 'Indígena',
+    '6': 'Não dispõe da informação',
+    0: 'Não declarado',
+    1: 'Branca',
+    2: 'Preta',
+    3: 'Parda',
+    4: 'Amarela',
+    5: 'Indígena',
+    6: 'Não dispõe da informação'
+}
+
+# Mapeamento para localização da escola (TP_LOCALIZACAO_ESC)
+LOCALIZACAO_ESCOLA_MAP = {
+    '1': 'Urbana',
+    '2': 'Rural',
+    1: 'Urbana',
+    2: 'Rural',
+    1.0: 'Urbana',
+    2.0: 'Rural'
+}
+
+# Mapeamento para faixa de renda familiar (Q006)
+RENDA_FAMILIAR_MAP = {
+    'A': 'Nenhuma renda',
+    'B': 'Até R$ 1.212,00',
+    'C': 'De R$ 1.212,01 até R$ 1.818,00',
+    'D': 'De R$ 1.818,01 até R$ 2.424,00',
+    'E': 'De R$ 2.424,01 até R$ 3.030,00',
+    'F': 'De R$ 3.030,01 até R$ 3.636,00',
+    'G': 'De R$ 3.636,01 até R$ 4.848,00',
+    'H': 'De R$ 4.848,01 até R$ 6.060,00',
+    'I': 'De R$ 6.060,01 até R$ 7.272,00',
+    'J': 'De R$ 7.272,01 até R$ 8.484,00',
+    'K': 'De R$ 8.484,01 até R$ 9.696,00',
+    'L': 'De R$ 9.696,01 até R$ 10.908,00',
+    'M': 'De R$ 10.908,01 até R$ 12.120,00',
+    'N': 'De R$ 12.120,01 até R$ 14.544,00',
+    'O': 'De R$ 14.544,01 até R$ 18.180,00',
+    'P': 'De R$ 18.180,01 até R$ 24.240,00',
+    'Q': 'Mais de R$ 24.240,00'
+}
+
+# Mapeamento para sexo
+SEXO_MAP = {
+    'M': 'Masculino',
+    'F': 'Feminino'
+}
 
 # ============================================================================
 # FUNÇÕES UTILITÁRIAS
@@ -372,13 +443,27 @@ def create_socioeconomic_analysis(df):
             x=0.5, y=0.5, showarrow=False
         )
     
+    # Criar cópia do dataframe e mapear valores de renda
+    df_plot = df.copy()
+    df_plot['renda_familiar_label'] = df_plot['renda_familiar'].map(RENDA_FAMILIAR_MAP)
+    
+    # Remover valores não mapeados
+    df_plot = df_plot[df_plot['renda_familiar_label'].notna()]
+    
+    if len(df_plot) == 0:
+        return go.Figure().add_annotation(
+            text="Dados de renda não disponíveis após mapeamento",
+            xref="paper", yref="paper",
+            x=0.5, y=0.5, showarrow=False
+        )
+    
     fig = px.box(
-        df,
-        x='renda_familiar',
+        df_plot,
+        x='renda_familiar_label',
         y='nota_media',
         title="Desempenho por Faixa de Renda Familiar",
-        labels={'nota_media': 'Nota Média', 'renda_familiar': 'Faixa de Renda'},
-        color='renda_familiar',
+        labels={'nota_media': 'Nota Média', 'renda_familiar_label': 'Faixa de Renda'},
+        color='renda_familiar_label',
         color_discrete_sequence=px.colors.qualitative.Set3
     )
     
@@ -391,52 +476,57 @@ def create_socioeconomic_analysis(df):
 def create_equity_analysis(df):
     """Múltiplos gráficos mostrando gaps de equidade"""
     fig = make_subplots(
-        rows=2, cols=2,
+        rows=1, cols=3,
         subplot_titles=(
             'Gap de Gênero', 'Gap Público-Privado',
-            'Gap por Cor/Raça', 'Gap Urbano-Rural'
+            'Gap por Cor/Raça'
         ),
-        specs=[[{'type': 'bar'}, {'type': 'bar'}],
-               [{'type': 'bar'}, {'type': 'bar'}]]
+        specs=[[{'type': 'bar'}, {'type': 'bar'}, {'type': 'bar'}]]
     )
     
     # Gender gap
     if 'sexo' in df.columns:
-        gender_data = df.groupby('sexo')['nota_media'].mean().reset_index()
-        fig.add_trace(
-            go.Bar(x=gender_data['sexo'], y=gender_data['nota_media'], 
-                   marker_color=['#636EFA', '#EF553B'], showlegend=False),
-            row=1, col=1
-        )
+        df_temp = df.copy()
+        df_temp['sexo_label'] = df_temp['sexo'].map(SEXO_MAP)
+        gender_data = df_temp.groupby('sexo_label')['nota_media'].mean().reset_index()
+        gender_data = gender_data[gender_data['sexo_label'].notna()]
+        
+        if len(gender_data) > 0:
+            fig.add_trace(
+                go.Bar(x=gender_data['sexo_label'], y=gender_data['nota_media'],
+                       marker_color=['#636EFA', '#EF553B'], showlegend=False),
+                row=1, col=1
+            )
     
     # School type gap
     if 'tipo_escola' in df.columns:
-        school_data = df.groupby('tipo_escola')['nota_media'].mean().reset_index()
-        fig.add_trace(
-            go.Bar(x=school_data['tipo_escola'], y=school_data['nota_media'],
-                   marker_color=['#00CC96', '#AB63FA'], showlegend=False),
-            row=1, col=2
-        )
+        df_temp = df.copy()
+        df_temp['tipo_escola_label'] = df_temp['tipo_escola'].map(TIPO_ESCOLA_MAP)
+        school_data = df_temp.groupby('tipo_escola_label')['nota_media'].mean().reset_index()
+        school_data = school_data[school_data['tipo_escola_label'].notna()]
+        
+        if len(school_data) > 0:
+            fig.add_trace(
+                go.Bar(x=school_data['tipo_escola_label'], y=school_data['nota_media'],
+                       marker_color=['#00CC96', '#AB63FA', '#FFA15A'], showlegend=False),
+                row=1, col=2
+            )
     
     # Race gap
     if 'cor_raca' in df.columns:
-        race_data = df.groupby('cor_raca')['nota_media'].mean().reset_index()
-        fig.add_trace(
-            go.Bar(x=race_data['cor_raca'], y=race_data['nota_media'],
-                   marker_color=px.colors.qualitative.Pastel, showlegend=False),
-            row=2, col=1
-        )
+        df_temp = df.copy()
+        df_temp['cor_raca_label'] = df_temp['cor_raca'].map(COR_RACA_MAP)
+        race_data = df_temp.groupby('cor_raca_label')['nota_media'].mean().reset_index()
+        race_data = race_data[race_data['cor_raca_label'].notna()]
+        
+        if len(race_data) > 0:
+            fig.add_trace(
+                go.Bar(x=race_data['cor_raca_label'], y=race_data['nota_media'],
+                       marker_color=px.colors.qualitative.Pastel, showlegend=False),
+                row=1, col=3
+            )
     
-    # Urban-rural gap
-    if 'localizacao_escola' in df.columns:
-        location_data = df.groupby('localizacao_escola')['nota_media'].mean().reset_index()
-        fig.add_trace(
-            go.Bar(x=location_data['localizacao_escola'], y=location_data['nota_media'],
-                   marker_color=['#FFA15A', '#19D3F3'], showlegend=False),
-            row=2, col=2
-        )
-    
-    fig.update_layout(height=600, title_text="Análise de Equidade Educacional")
+    fig.update_layout(height=500, title_text="Análise de Equidade Educacional")
     fig.update_yaxes(title_text="Nota Média")
     
     return fig
@@ -656,7 +746,7 @@ def render_content(active_tab):
                         dbc.CardHeader([
                             html.H5([
                                 html.I(className="fas fa-lightbulb me-2"),
-                                "Insights Automáticos"
+                                "Insights Rápidos"
                             ])
                         ]),
                         dbc.CardBody([

@@ -194,9 +194,17 @@ class DataTransformer:
     
     def _create_regional_groupings(self, df: pd.DataFrame) -> pd.DataFrame:
         """Create regional groupings from state codes"""
-        state_col = 'SG_UF_RESIDENCIA' if 'SG_UF_RESIDENCIA' in df.columns else 'SG_UF'
+        # Try different state column names
+        if 'SG_UF_RESIDENCIA' in df.columns:
+            state_col = 'SG_UF_RESIDENCIA'
+        elif 'SG_UF_PROVA' in df.columns:
+            state_col = 'SG_UF_PROVA'
+        elif 'SG_UF' in df.columns:
+            state_col = 'SG_UF'
+        else:
+            state_col = None
         
-        if state_col in df.columns:
+        if state_col:
             region_mapping = {
                 # Norte
                 'AC': 'Norte', 'AP': 'Norte', 'AM': 'Norte', 'PA': 'Norte',
@@ -286,10 +294,15 @@ class DataTransformer:
         Returns:
             State-level aggregated DataFrame
         """
-        state_col = 'SG_UF_RESIDENCIA' if 'SG_UF_RESIDENCIA' in df.columns else 'SG_UF'
-        
-        if state_col not in df.columns:
-            raise ValueError(f"State column not found in DataFrame")
+        # Try different state column names
+        if 'SG_UF_RESIDENCIA' in df.columns:
+            state_col = 'SG_UF_RESIDENCIA'
+        elif 'SG_UF_PROVA' in df.columns:
+            state_col = 'SG_UF_PROVA'
+        elif 'SG_UF' in df.columns:
+            state_col = 'SG_UF'
+        else:
+            raise ValueError(f"State column not found in DataFrame. Available columns: {df.columns.tolist()}")
         
         self.logger.info("Aggregating data by state")
         

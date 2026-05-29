@@ -13,7 +13,7 @@ import argparse
 # Adicionar src ao path
 sys.path.insert(0, str(Path(__file__).parent / 'src'))
 
-from config import DEFAULT_YEAR, SAMPLE_SIZE
+from config import DEFAULT_YEAR, MAX_RECORDS
 from data_processing.data_loader import DataLoader
 from data_processing.data_cleaner import DataCleaner
 from data_processing.data_transformer import DataTransformer
@@ -101,7 +101,7 @@ Examples:
     parser.add_argument(
         '--sample',
         action='store_true',
-        help=f'Use sample data for development (size: {SAMPLE_SIZE})'
+        help=f'Use sample data for development (size: {MAX_RECORDS})'
     )
     
     parser.add_argument(
@@ -165,16 +165,13 @@ def run_pipeline(args=None):
         
         # Load data using new unified method
         try:
-            df_enem = loader.load_data(
-                source=args.source,
+            df_enem = loader.load_enem_data(
                 year=args.year,
-                years=args.years,
+                max_records=args.limit if args.limit else MAX_RECORDS,
                 states=args.states,
-                limit=args.limit,
-                sample=args.sample,
                 force_refresh=args.force_refresh
             )
-            logger.info(f"✓ Data loaded: {len(df_enem):,} rows, {len(df_enem.columns)} columns")
+            logger.info(f"[OK] Data loaded: {len(df_enem):,} rows, {len(df_enem.columns)} columns")
         except Exception as e:
             logger.error(f"Failed to load data: {e}")
             raise
@@ -197,7 +194,7 @@ def run_pipeline(args=None):
         logger.info("="*80)
         
         df_enem_transformed = transformer.transform_enem_data(df_enem_clean)
-        logger.info(f"✓ Transformation complete: {len(df_enem_transformed.columns)} columns")
+        logger.info(f"[OK] Transformation complete: {len(df_enem_transformed.columns)} columns")
         
         # ========================================
         # STEP 4: CREATE AGGREGATIONS
@@ -223,8 +220,8 @@ def run_pipeline(args=None):
                     )
                     
                     if df_state_agg is not None and df_region_agg is not None:
-                        logger.info(f"✓ State aggregation from BigQuery: {len(df_state_agg)} records")
-                        logger.info(f"✓ Region aggregation from BigQuery: {len(df_region_agg)} records")
+                        logger.info(f"[OK] State aggregation from BigQuery: {len(df_state_agg)} records")
+                        logger.info(f"[OK] Region aggregation from BigQuery: {len(df_region_agg)} records")
                     else:
                         raise ValueError("BigQuery aggregations returned None")
                         
@@ -233,14 +230,14 @@ def run_pipeline(args=None):
                     logger.info("Falling back to local aggregation...")
                     df_state_agg = transformer.aggregate_by_state(df_enem_transformed)
                     df_region_agg = transformer.aggregate_by_region(df_enem_transformed)
-                    logger.info(f"✓ State aggregation (local): {len(df_state_agg)} states")
-                    logger.info(f"✓ Regional aggregation (local): {len(df_region_agg)} regions")
+                    logger.info(f"[OK] State aggregation (local): {len(df_state_agg)} states")
+                    logger.info(f"[OK] Regional aggregation (local): {len(df_region_agg)} regions")
             else:
                 # Local aggregation
                 df_state_agg = transformer.aggregate_by_state(df_enem_transformed)
                 df_region_agg = transformer.aggregate_by_region(df_enem_transformed)
-                logger.info(f"✓ State aggregation: {len(df_state_agg)} states")
-                logger.info(f"✓ Regional aggregation: {len(df_region_agg)} regions")
+                logger.info(f"[OK] State aggregation: {len(df_state_agg)} states")
+                logger.info(f"[OK] Regional aggregation: {len(df_region_agg)} regions")
         else:
             logger.info("\n" + "="*80)
             logger.info("STEP 4: SKIPPING AGGREGATIONS (--skip-aggregations)")
@@ -262,16 +259,16 @@ def run_pipeline(args=None):
         output_file = 'data/processed/enem_processed.csv'
         logger.info(f"Saving to {output_file}...")
         df_enem_transformed.to_csv(output_file, index=False, encoding='utf-8')
-        logger.info(f"✓ Saved: {output_file}")
+        logger.info(f"[OK] Saved: {output_file}")
         
         # Save aggregations (if created)
         if df_state_agg is not None:
             df_state_agg.to_csv('data/processed/aggregated_by_state.csv', index=False)
-            logger.info("✓ Saved: data/processed/aggregated_by_state.csv")
+            logger.info("[OK] Saved: data/processed/aggregated_by_state.csv")
         
         if df_region_agg is not None:
             df_region_agg.to_csv('data/processed/aggregated_by_region.csv', index=False)
-            logger.info("✓ Saved: data/processed/aggregated_by_region.csv")
+            logger.info("[OK] Saved: data/processed/aggregated_by_region.csv")
         
         # ========================================
         # STEP 6: VALIDATION
@@ -283,7 +280,7 @@ def run_pipeline(args=None):
         validation = integrator.validate_integration(df_enem_transformed)
         
         if validation['meets_minimum_records']:
-            logger.info("✓ Dataset meets minimum record requirement (10,000+)")
+            logger.info("[OK] Dataset meets minimum record requirement (10,000+)")
         else:
             logger.warning("✗ Dataset does not meet minimum record requirement")
         
@@ -304,7 +301,7 @@ def run_pipeline(args=None):
         logger.info(f"Data source: {args.source}")
         logger.info(f"Cache used: {not args.no_cache}")
         logger.info("="*80)
-        logger.info("✓ PIPELINE COMPLETED SUCCESSFULLY")
+        logger.info("[OK] PIPELINE COMPLETED SUCCESSFULLY")
         logger.info("="*80)
         
         logger.info("\nNext steps:")
@@ -350,7 +347,7 @@ def create_sample_data():
     }
     
     df = pd.DataFrame(data)
-    logger.info(f"✓ Sample data created: {len(df):,} rows")
+    logger.info(f"[OK] Sample data created: {len(df):,} rows")
     
     return df
 

@@ -196,7 +196,7 @@ class DataCache:
             }
             self._save_metadata(cache_path, metadata)
             
-            logger.info(f"✓ Cache saved: {cache_path.name} ({len(df):,} rows)")
+            logger.info(f"[OK] Cache saved: {cache_path.name} ({len(df):,} rows)")
             return cache_path
             
         except Exception as e:
@@ -254,9 +254,9 @@ class DataCache:
             
             metadata = self._load_metadata(cache_path)
             if metadata:
-                logger.info(f"✓ Cache loaded: {filename} ({len(df):,} rows, cached {metadata.get('cached_at', 'unknown')})")
+                logger.info(f"[OK] Cache loaded: {filename} ({len(df):,} rows, cached {metadata.get('cached_at', 'unknown')})")
             else:
-                logger.info(f"✓ Cache loaded: {filename} ({len(df):,} rows)")
+                logger.info(f"[OK] Cache loaded: {filename} ({len(df):,} rows)")
             
             return df
             
@@ -315,7 +315,7 @@ class DataCache:
                     total_cleared += 1
                     logger.debug(f"Deleted: {file_path.name}")
         
-        logger.info(f"✓ Cache cleared: {total_cleared} files, {total_size_mb:.2f} MB freed")
+        logger.info(f"[OK] Cache cleared: {total_cleared} files, {total_size_mb:.2f} MB freed")
     
     def get_cache_info(self) -> Dict[str, Any]:
         """

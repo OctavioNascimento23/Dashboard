@@ -72,7 +72,7 @@ class DataCleaner:
             'removal_percentage': ((initial_rows - final_rows) / initial_rows * 100)
         }
         
-        self.logger.info(f"ENEM cleaning complete: {initial_rows:,} → {final_rows:,} rows")
+        self.logger.info(f"ENEM cleaning complete: {initial_rows:,} -> {final_rows:,} rows")
         return df_clean
     
     def clean_censo_data(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -113,7 +113,7 @@ class DataCleaner:
             'removal_percentage': ((initial_rows - final_rows) / initial_rows * 100)
         }
         
-        self.logger.info(f"Censo cleaning complete: {initial_rows:,} → {final_rows:,} rows")
+        self.logger.info(f"Censo cleaning complete: {initial_rows:,} -> {final_rows:,} rows")
         return df_clean
     
     def _remove_duplicates(self, df: pd.DataFrame, subset: Optional[List[str]] = None) -> pd.DataFrame:

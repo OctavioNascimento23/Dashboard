@@ -84,7 +84,7 @@ class DataLoader:
             self.logger.info("Checking cache...")
             df_cached = self.cache.load(cache_type="raw", **cache_params)
             if df_cached is not None:
-                self.logger.info(f"✓ Data loaded from cache: {len(df_cached):,} rows")
+                self.logger.info(f"[OK] Data loaded from cache: {len(df_cached):,} rows")
                 return df_cached
         
         # Load from CSV
@@ -109,7 +109,7 @@ class DataLoader:
                 low_memory=False
             )
             
-            self.logger.info(f"✓ Loaded {len(df):,} rows from CSV")
+            self.logger.info(f"[OK] Loaded {len(df):,} rows from CSV")
             
             # Filter by year if column exists
             if 'NU_ANO' in df.columns:
@@ -138,7 +138,7 @@ class DataLoader:
                 self.logger.info("Saving to cache...")
                 self.cache.save(df, cache_type="raw", **cache_params)
             
-            self.logger.info(f"✓ Final dataset: {len(df):,} rows, {len(df.columns)} columns")
+            self.logger.info(f"[OK] Final dataset: {len(df):,} rows, {len(df.columns)} columns")
             return df
             
         except Exception as e:
