@@ -457,6 +457,27 @@ def create_socioeconomic_analysis(df):
             x=0.5, y=0.5, showarrow=False
         )
     
+    # Define the ascending order for income categories
+    income_order = [
+        'Nenhuma renda',
+        'Até R$ 1.212,00',
+        'De R$ 1.212,01 até R$ 1.818,00',
+        'De R$ 1.818,01 até R$ 2.424,00',
+        'De R$ 2.424,01 até R$ 3.030,00',
+        'De R$ 3.030,01 até R$ 3.636,00',
+        'De R$ 3.636,01 até R$ 4.848,00',
+        'De R$ 4.848,01 até R$ 6.060,00',
+        'De R$ 6.060,01 até R$ 7.272,00',
+        'De R$ 7.272,01 até R$ 8.484,00',
+        'De R$ 8.484,01 até R$ 9.696,00',
+        'De R$ 9.696,01 até R$ 10.908,00',
+        'De R$ 10.908,01 até R$ 12.120,00',
+        'De R$ 12.120,01 até R$ 14.544,00',
+        'De R$ 14.544,01 até R$ 18.180,00',
+        'De R$ 18.180,01 até R$ 24.240,00',
+        'Mais de R$ 24.240,00'
+    ]
+    
     fig = px.box(
         df_plot,
         x='renda_familiar_label',
@@ -464,7 +485,8 @@ def create_socioeconomic_analysis(df):
         title="Desempenho por Faixa de Renda Familiar",
         labels={'nota_media': 'Nota Média', 'renda_familiar_label': 'Faixa de Renda'},
         color='renda_familiar_label',
-        color_discrete_sequence=px.colors.qualitative.Set3
+        color_discrete_sequence=px.colors.qualitative.Set3,
+        category_orders={'renda_familiar_label': income_order}
     )
     
     fig.update_layout(height=450, showlegend=False)
